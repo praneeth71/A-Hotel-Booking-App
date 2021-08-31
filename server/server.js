@@ -1,10 +1,29 @@
 import express from "express";
-import { restart } from "nodemon";
+import fs from 'fs';
+require("dotenv").config();
+import cors from 'cors';
+import mongoose from "mongoose";
+import { resourceUsage } from "process";
 
 const app = express();
 
-app.get("/api/:message", (req, res) => {
-    res.status(200).send(`Here is your message:  ${req.params.message}`);
-});
+// db connection
+mongoose.connect(process.env.DATABASE, {
+    useNewUrlParser: true,
+    useFindAndModify: false,
+    useUnifiedTopology: true,
+    useCreateIndex: true,
+})
+.then(() => console.log("DB Connected"))
+.catch((err) => console.log("DB Connection Error", err));
 
-app.listen(8000, () => console.log('Server is running on port 8000'));
+//middlewares
+app.use(cors());
+
+// route middleware
+fs.readdirSync('./routes').map((r) => app.use('/api', require(`./routes/${r}`)))
+//app.use('/api', router);
+
+
+const port = process.env.PORT || 8000;
+app.listen(port, () => console.log(`Server is running on port ${port}`));
