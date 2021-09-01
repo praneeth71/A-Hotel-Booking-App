@@ -3,25 +3,23 @@ import fs from 'fs';
 require("dotenv").config();
 import cors from 'cors';
 import mongoose from "mongoose";
-import { resourceUsage } from "process";
+const morgan = require("morgan");
+
 
 const app = express();
 
 // db connection
-mongoose.connect(process.env.DATABASE, {
-    useNewUrlParser: true,
-    useFindAndModify: false,
-    useUnifiedTopology: true,
-    useCreateIndex: true,
-})
+mongoose.connect(process.env.DATABASE)
 .then(() => console.log("DB Connected"))
 .catch((err) => console.log("DB Connection Error", err));
 
 //middlewares
 app.use(cors());
+app.use(express.json());
+app.use(morgan("dev"));
 
 // route middleware
-fs.readdirSync('./routes').map((r) => app.use('/api', require(`./routes/${r}`)))
+fs.readdirSync('./routes').map((r) => app.use('/api', require(`./routes/${r}`)));
 //app.use('/api', router);
 
 
