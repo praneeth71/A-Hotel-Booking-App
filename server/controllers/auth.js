@@ -13,7 +13,7 @@ export const register = async (req, res) => {
     // register
     const user1 = new user(req.body);
     try {
-        await user1.save();
+        await user1.save(); // It basically saves in the ROBO 3T database.
         console.log("USER CREATED", user1);
         return res.json({ ok: true });
 
